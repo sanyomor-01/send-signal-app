@@ -1,0 +1,339 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────
+   DESIGN TOKENS — Send Signal
+   Source of truth: design-tokens.css
+   ─────────────────────────────────────────── */
+
+:root {
+  /* ── Typography tokens (rem-converted from px) ── */
+  --font-display-large-size: clamp(2.25rem, 4vw, 3.75rem);
+  --font-display-large-weight: 500;
+  --font-display-large-line-height: 1;
+  --font-display-large-letter-spacing: -0.0625rem;
+
+  --font-display-medium-size: clamp(1.75rem, 3vw, 3rem);
+  --font-display-medium-weight: 500;
+  --font-display-medium-line-height: 1.08;
+  --font-display-medium-letter-spacing: -0.0625rem;
+
+  --font-display-small-size: clamp(1.375rem, 2.5vw, 2.25rem);
+  --font-display-small-weight: 500;
+  --font-display-small-line-height: 1.11;
+  --font-display-small-letter-spacing: -0.0625rem;
+
+  --font-headline-large-size: clamp(1.5rem, 2.5vw, 2rem);
+  --font-headline-large-weight: 500;
+  --font-headline-large-line-height: 1.25;
+  --font-headline-large-letter-spacing: -0.0625rem;
+
+  --font-headline-medium-size: clamp(1.25rem, 2vw, 1.75rem);
+  --font-headline-medium-weight: 500;
+  --font-headline-medium-line-height: 1.29;
+  --font-headline-medium-letter-spacing: -0.0625rem;
+
+  --font-headline-small-size: 1.25rem;
+  --font-headline-small-weight: 500;
+  --font-headline-small-line-height: 1.4;
+  --font-headline-small-letter-spacing: 0;
+
+  --font-title-large-size: 1.375rem;
+  --font-title-large-weight: 500;
+  --font-title-large-line-height: 1.27;
+  --font-title-large-letter-spacing: -0.0625rem;
+
+  --font-title-medium-size: 1rem;
+  --font-title-medium-weight: 500;
+  --font-title-medium-line-height: 1.5;
+  --font-title-medium-letter-spacing: -0.03125rem;
+
+  --font-title-small-size: 0.875rem;
+  --font-title-small-weight: 500;
+  --font-title-small-line-height: 1.43;
+  --font-title-small-letter-spacing: -0.0125rem;
+
+  --font-body-large-size: 1rem;
+  --font-body-large-weight: 500;
+  --font-body-large-line-height: 1.5;
+  --font-body-large-letter-spacing: -0.0375rem;
+
+  --font-body-large-reg-size: 1rem;
+  --font-body-large-reg-weight: 400;
+  --font-body-large-reg-line-height: 1.5;
+  --font-body-large-reg-letter-spacing: -0.0375rem;
+
+  --font-body-medium-size: 0.875rem;
+  --font-body-medium-weight: 500;
+  --font-body-medium-line-height: 1.43;
+  --font-body-medium-letter-spacing: 0.015625rem;
+
+  --font-body-small-size: 0.75rem;
+  --font-body-small-weight: 500;
+  --font-body-small-line-height: 1.33;
+  --font-body-small-letter-spacing: -0.0375rem;
+
+  --font-label-large-size: 0.875rem;
+  --font-label-large-weight: 500;
+  --font-label-large-line-height: 1;
+  --font-label-large-letter-spacing: -0.0125rem;
+
+  --font-label-medium-size: 0.75rem;
+  --font-label-medium-weight: 400;
+  --font-label-medium-line-height: 1.33;
+  --font-label-medium-letter-spacing: -0.0125rem;
+
+  --font-label-medium-semibold-size: 0.75rem;
+  --font-label-medium-semibold-weight: 600;
+  --font-label-medium-semibold-line-height: 1.33;
+  --font-label-medium-semibold-letter-spacing: -0.0125rem;
+
+  --font-label-small-size: 0.6875rem;
+  --font-label-small-weight: 500;
+  --font-label-small-line-height: 1;
+  --font-label-small-letter-spacing: -0.0125rem;
+
+  /* ── Color tokens (from design-tokens.css) ── */
+  --color-primary: #ff5b04;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #ffe4d6;
+  --color-on-primary-container: #993500;
+
+  --color-secondary: #cc7600;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #ffeed6;
+  --color-on-secondary-container: #995800;
+
+  --color-tertiary: #a2352a;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #f7e1df;
+  --color-on-tertiary-container: #7a281f;
+
+  --color-error: #f20d0d;
+  --color-on-error: #ffffff;
+  --color-error-container: #fdcece;
+  --color-on-error-container: #910808;
+
+  --color-success: #00992a;
+  --color-on-success: #ffffff;
+  --color-success-container: #e5ffec;
+  --color-on-success-container: #00661c;
+
+  --color-warning: #ccb100;
+  --color-on-warning: #ffffff;
+  --color-warning-container: #fffad6;
+  --color-on-warning-container: #998500;
+
+  --color-info: #10b0bc;
+  --color-on-info: #ffffff;
+  --color-info-container: #d9f9fc;
+  --color-on-info-container: #0c848d;
+
+  --color-background: #f9fafb;
+  --color-on-background: #141b1f;
+
+  --color-surface: #f9fafb;
+  --color-on-surface: #141b1f;
+  --color-surface-variant: #e8ebee;
+  --color-on-surface-variant: #434d54;
+  --color-surface-container: #eff3f5;
+  --color-surface-container-high: #e6ecef;
+  --color-surface-container-highest: #e0e7ea;
+
+  --color-outline: #72838d;
+  --color-outline-variant: #c6cdd2;
+  --color-outline-normal: #aab4bb;
+
+  --color-inverse-surface: #27363f;
+  --color-inverse-on-surface: #eff3f5;
+
+  /* ── Semantic status colors ── */
+  --color-status-new: #10b0bc;
+  --color-status-new-bg: #d9f9fc;
+  --color-status-contacted: #cc7600;
+  --color-status-contacted-bg: #ffeed6;
+  --color-status-replied: #0c848d;
+  --color-status-replied-bg: #d9f9fc;
+  --color-status-interested: #00992a;
+  --color-status-interested-bg: #e5ffec;
+  --color-status-not-interested: #72838d;
+  --color-status-not-interested-bg: #e8ebee;
+  --color-status-converted: #00661c;
+  --color-status-converted-bg: #e5ffec;
+  --color-status-bounced: #910808;
+  --color-status-bounced-bg: #fdcece;
+  --color-status-unsubscribed: #c20a0a;
+  --color-status-unsubscribed-bg: #fee7e7;
+
+  --color-msg-queued: #72838d;
+  --color-msg-queued-bg: #e8ebee;
+  --color-msg-sending: #10b0bc;
+  --color-msg-sending-bg: #d9f9fc;
+  --color-msg-sent: #72838d;
+  --color-msg-sent-bg: #eff3f5;
+  --color-msg-delivered: #00992a;
+  --color-msg-delivered-bg: #e5ffec;
+  --color-msg-read: #00661c;
+  --color-msg-read-bg: #d6ffe1;
+  --color-msg-replied: #0c848d;
+  --color-msg-replied-bg: #d9f9fc;
+  --color-msg-failed: #c20a0a;
+  --color-msg-failed-bg: #fee7e7;
+
+  --color-campaign-draft: #72838d;
+  --color-campaign-draft-bg: #e8ebee;
+  --color-campaign-scheduled: #10b0bc;
+  --color-campaign-scheduled-bg: #d9f9fc;
+  --color-campaign-running: #ff5b04;
+  --color-campaign-running-bg: #ffe4d6;
+  --color-campaign-paused: #ccb100;
+  --color-campaign-paused-bg: #fffad6;
+  --color-campaign-completed: #00992a;
+  --color-campaign-completed-bg: #e5ffec;
+  --color-campaign-cancelled: #72838d;
+  --color-campaign-cancelled-bg: #e8ebee;
+  --color-campaign-failed: #c20a0a;
+  --color-campaign-failed-bg: #fee7e7;
+}
+
+/* ─────────────────────────────────────────────
+   BASE STYLES
+   ─────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, Roboto, Arial, sans-serif;
+  font-size: var(--font-body-large-reg-size);
+  font-weight: var(--font-body-large-reg-weight);
+  line-height: var(--font-body-large-reg-line-height);
+  color: var(--color-on-background);
+  background-color: var(--color-background);
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────────
+   TYPOGRAPHY UTILITY CLASSES
+   ─────────────────────────────────────────── */
+
+.text-display-large {
+  font-size: var(--font-display-large-size);
+  font-weight: var(--font-display-large-weight);
+  line-height: var(--font-display-large-line-height);
+  letter-spacing: var(--font-display-large-letter-spacing);
+}
+
+.text-display-medium {
+  font-size: var(--font-display-medium-size);
+  font-weight: var(--font-display-medium-weight);
+  line-height: var(--font-display-medium-line-height);
+  letter-spacing: var(--font-display-medium-letter-spacing);
+}
+
+.text-headline-large {
+  font-size: var(--font-headline-large-size);
+  font-weight: var(--font-headline-large-weight);
+  line-height: var(--font-headline-large-line-height);
+  letter-spacing: var(--font-headline-large-letter-spacing);
+}
+
+.text-headline-medium {
+  font-size: var(--font-headline-medium-size);
+  font-weight: var(--font-headline-medium-weight);
+  line-height: var(--font-headline-medium-line-height);
+}
+
+.text-headline-small {
+  font-size: var(--font-headline-small-size);
+  font-weight: var(--font-headline-small-weight);
+  line-height: var(--font-headline-small-line-height);
+}
+
+.text-title-large {
+  font-size: var(--font-title-large-size);
+  font-weight: var(--font-title-large-weight);
+  line-height: var(--font-title-large-line-height);
+  letter-spacing: var(--font-title-large-letter-spacing);
+}
+
+.text-title-medium {
+  font-size: var(--font-title-medium-size);
+  font-weight: var(--font-title-medium-weight);
+  line-height: var(--font-title-medium-line-height);
+}
+
+.text-title-small {
+  font-size: var(--font-title-small-size);
+  font-weight: var(--font-title-small-weight);
+  line-height: var(--font-title-small-line-height);
+}
+
+.text-body-large {
+  font-size: var(--font-body-large-size);
+  font-weight: var(--font-body-large-weight);
+  line-height: var(--font-body-large-line-height);
+}
+
+.text-body-large-reg {
+  font-size: var(--font-body-large-reg-size);
+  font-weight: var(--font-body-large-reg-weight);
+  line-height: var(--font-body-large-reg-line-height);
+}
+
+.text-body-medium {
+  font-size: var(--font-body-medium-size);
+  font-weight: var(--font-body-medium-weight);
+  line-height: var(--font-body-medium-line-height);
+}
+
+.text-body-small {
+  font-size: var(--font-body-small-size);
+  font-weight: var(--font-body-small-weight);
+  line-height: var(--font-body-small-line-height);
+}
+
+.text-label-large {
+  font-size: var(--font-label-large-size);
+  font-weight: var(--font-label-large-weight);
+  line-height: var(--font-label-large-line-height);
+}
+
+.text-label-medium {
+  font-size: var(--font-label-medium-size);
+  font-weight: var(--font-label-medium-weight);
+  line-height: var(--font-label-medium-line-height);
+}
+
+.text-label-small {
+  font-size: var(--font-label-small-size);
+  font-weight: var(--font-label-small-weight);
+  line-height: var(--font-label-small-line-height);
+}
+
+/* ─────────────────────────────────────────────
+   FOCUS STYLES (accessibility)
+   ─────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ─────────────────────────────────────────────
+   SMOOTH TRANSITIONS
+   ─────────────────────────────────────────── */
+
+a, button {
+  transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+@media (min-width: 900px) {
+  .auth-panel-left { display: flex !important; }
+}

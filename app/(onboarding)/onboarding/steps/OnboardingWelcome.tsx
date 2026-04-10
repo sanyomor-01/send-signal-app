@@ -11,8 +11,12 @@ export function OnboardingWelcome({ onNext }: Props) {
         width: '5rem', height: '5rem', borderRadius: '50%',
         background: 'linear-gradient(135deg, var(--color-primary-container), var(--color-primary))',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '2rem', margin: '0 auto 2rem',
-      }}>📡</div>
+        margin: '0 auto 2rem', flexShrink: 0,
+      }}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="40" height="40" style={{ marginLeft: '4px' }}>
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+        </svg>
+      </div>
 
       <h1 style={{
         fontSize: 'var(--font-display-small-size)',

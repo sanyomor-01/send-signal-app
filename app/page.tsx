@@ -1,10 +1,4 @@
-import type { Metadata } from 'next'
 import Link from 'next/link'
-
-export const metadata: Metadata = {
-  title: 'Send Signal — WhatsApp Outreach Platform',
-  description: 'Send personalized WhatsApp messages at scale. Import leads, create templates, run campaigns, and track every reply.',
-}
 
 export default function LandingPage() {
   return (
@@ -14,15 +8,24 @@ export default function LandingPage() {
       <nav style={{
         position: 'sticky', top: 0, zIndex: 100,
         backgroundColor: 'rgba(249,250,251,0.9)', backdropFilter: 'blur(8px)',
-        borderBottom: '1px solid var(--color-outline-variant)',
         padding: '0 2rem',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '4rem',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <div style={{ width: '1.75rem', height: '1.75rem', borderRadius: '0.375rem', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem' }}>📡</div>
+          <div style={{ width: '1.75rem', height: '1.75rem', borderRadius: '0.375rem', background: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="14" height="14" style={{ marginLeft: '2px' }}>
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+            </svg>
+          </div>
           <span style={{ fontWeight: 700, color: 'var(--color-on-surface)', fontSize: 'var(--font-title-medium-size)' }}>Send Signal</span>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginRight: '0.5rem' }}>
+            {['Features', 'Use cases', 'Pricing', 'Contact'].map((item) => (
+              <Link key={item} href={`#${item.toLowerCase().replace(' ', '-')}`} style={{ color: 'var(--color-on-surface)', textDecoration: 'none', fontSize: 'var(--font-body-medium-size)', fontWeight: 500 }}>{item}</Link>
+            ))}
+          </div>
+          <div style={{ width: '1px', height: '1.5rem', backgroundColor: 'var(--color-outline-variant)' }}></div>
           <Link href="/sign-in" style={{ color: 'var(--color-on-surface-variant)', textDecoration: 'none', fontSize: 'var(--font-body-medium-size)' }}>Sign in</Link>
           <Link href="/sign-up" style={{ padding: '0.5rem 1rem', borderRadius: '0.5rem', backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', textDecoration: 'none', fontSize: 'var(--font-label-large-size)', fontWeight: 500 }}>
             Get started free
@@ -112,9 +115,9 @@ export default function LandingPage() {
       {/* Footer */}
       <footer style={{ borderTop: '1px solid var(--color-outline-variant)', padding: '1.5rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
         <span style={{ fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)' }}>© 2025 Send Signal. Built for real outreach.</span>
-        <div style={{ display: 'flex', gap: '1.5rem' }}>
-          {['Privacy', 'Terms', 'Contact'].map((l) => (
-            <Link key={l} href="#" style={{ fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)', textDecoration: 'none' }}>{l}</Link>
+        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+          {['Features', 'Use cases', 'Pricing', 'Contact', 'Privacy', 'Terms'].map((l) => (
+            <Link key={l} href={l === 'Privacy' || l === 'Terms' ? '#' : `#${l.toLowerCase().replace(' ', '-')}`} style={{ fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)', textDecoration: 'none' }}>{l}</Link>
           ))}
         </div>
       </footer>

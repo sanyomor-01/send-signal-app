@@ -62,8 +62,12 @@ export default function OnboardingPage() {
           <div style={{
             width: '1.75rem', height: '1.75rem', borderRadius: '0.375rem',
             background: 'var(--color-primary)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem',
-          }}>📡</div>
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="14" height="14" style={{ marginLeft: '2px' }}>
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+            </svg>
+          </div>
           <span style={{ fontWeight: 600, color: 'var(--color-on-surface)', fontSize: 'var(--font-title-medium-size)' }}>
             Send Signal
           </span>

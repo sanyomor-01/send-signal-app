@@ -4,7 +4,7 @@ import { verifyToken } from '@/lib/auth'
 const PUBLIC_ROUTES = ['/', '/sign-in', '/sign-up', '/api/auth/sign-in', '/api/auth/sign-up']
 const AUTH_ROUTES = ['/sign-in', '/sign-up']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get('ss_session')?.value
 
@@ -36,6 +36,8 @@ export async function middleware(request: NextRequest) {
 
   return NextResponse.next()
 }
+
+export default proxy
 
 export const config = {
   matcher: [

@@ -95,7 +95,7 @@
 
   /* ── Color tokens (from design-tokens.css) ── */
   --color-primary: #ff5b04;
-  --color-on-primary: #ffffff;
+  --color-on-primary: var(--sys-color-roles-primary-on-primary);
   --color-primary-container: #ffe4d6;
   --color-on-primary-container: #993500;
 

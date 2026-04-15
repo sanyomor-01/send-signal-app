@@ -42,11 +42,11 @@ export default function SignInPage() {
 
       <form action={action} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         <FormField id="email" label="Email address" required error={state?.error?.email?.[0]}>
-          <Input id="email" name="email" type="email" placeholder="you@company.com" required autoComplete="email" error={state?.error?.email?.[0]} />
+          <Input id="email" name="email" type="email" required autoComplete="email" error={state?.error?.email?.[0]} />
         </FormField>
 
         <FormField id="password" label="Password" required error={state?.error?.password?.[0]}>
-          <Input id="password" name="password" type="password" placeholder="Your password" required autoComplete="current-password" error={state?.error?.password?.[0]} />
+          <Input id="password" name="password" type="password" required autoComplete="current-password" error={state?.error?.password?.[0]} />
         </FormField>
 
         <Button id="sign-in-btn" type="submit" variant="primary" fullWidth loading={pending} size="lg">

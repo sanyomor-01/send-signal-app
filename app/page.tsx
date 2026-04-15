@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import UnicornScene from "unicornstudio-react/next"
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)

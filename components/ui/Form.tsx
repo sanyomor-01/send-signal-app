@@ -33,7 +33,7 @@ export function FormField({ id, label, required, error, hint, children }: FormFi
         .form-field__label {
           font-size: var(--font-label-large-size);
           font-weight: var(--font-label-large-weight);
-          color: var(--color-on-surface);
+          color: var(--color-on-surface-variant);
           line-height: 1.4;
         }
         .form-field__required { color: var(--color-error); }
@@ -85,6 +85,7 @@ export function Input({ id, error, className = '', ...props }: InputProps) {
           outline: none;
         }
         .ss-input::placeholder { color: var(--color-on-surface-variant); opacity: 0.7; }
+        .ss-input:hover:not(:focus):not(.ss-input--error) { border-color: var(--color-outline); }
         .ss-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(255,91,4,0.12); }
         .ss-input--error { border-color: var(--color-error); }
         .ss-input--error:focus { border-color: var(--color-error); box-shadow: 0 0 0 3px rgba(242,13,13,0.12); }
@@ -127,6 +128,7 @@ export function Textarea({ id, error, className = '', ...props }: TextareaProps)
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
           outline: none;
         }
+        .ss-textarea:hover:not(:focus):not(.ss-textarea--error) { border-color: var(--color-outline); }
         .ss-textarea:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(255,91,4,0.12); }
         .ss-textarea--error { border-color: var(--color-error); }
       `}</style>
@@ -170,9 +172,11 @@ export function Select({ id, error, className = '', children, ...props }: Select
           outline: none;
           transition: border-color 0.15s ease;
         }
+        .ss-select:hover:not(:focus):not(.ss-select--error) { border-color: var(--color-outline); }
         .ss-select:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(255,91,4,0.12); }
         .ss-select--error { border-color: var(--color-error); }
       `}</style>
     </>
   )
 }
+

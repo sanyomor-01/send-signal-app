@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isUnsubscribeMessage } from '@/lib/utils'
-import { successResponse, errorResponse, serverErrorResponse } from '@/lib/api'
+import { successResponse, serverErrorResponse } from '@/lib/api'
 
 // GET /api/webhooks/whatsapp — Meta webhook verification
 export async function GET(request: NextRequest) {

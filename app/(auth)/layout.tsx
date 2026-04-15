@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isSignUp = pathname === '/sign-up'
+  const isAuthPage = pathname === '/sign-up' || pathname === '/sign-in'
 
   return (
     <div style={{
@@ -13,7 +13,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       background: 'var(--color-background)',
     }}>
       {/* Left panel — branding */}
-      {!isSignUp && (
+      {!isAuthPage && (
         <div style={{
           display: 'none',
           flex: '0 0 45%',

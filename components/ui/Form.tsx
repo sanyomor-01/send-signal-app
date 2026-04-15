@@ -75,7 +75,7 @@ export function Input({ id, error, className = '', ...props }: InputProps) {
           padding: 0.625rem 0.875rem;
           border: 1.5px solid var(--color-outline-variant);
           border-radius: 0.5rem;
-          background-color: var(--color-surface);
+          background-color: var(--color-surface-container);
           color: var(--color-on-surface);
           font-family: inherit;
           font-size: var(--font-body-large-reg-size);
@@ -118,7 +118,7 @@ export function Textarea({ id, error, className = '', ...props }: TextareaProps)
           padding: 0.625rem 0.875rem;
           border: 1.5px solid var(--color-outline-variant);
           border-radius: 0.5rem;
-          background-color: var(--color-surface);
+          background-color: var(--color-surface-container);
           color: var(--color-on-surface);
           font-family: inherit;
           font-size: var(--font-body-large-reg-size);
@@ -160,7 +160,7 @@ export function Select({ id, error, className = '', children, ...props }: Select
           padding: 0.625rem 2rem 0.625rem 0.875rem;
           border: 1.5px solid var(--color-outline-variant);
           border-radius: 0.5rem;
-          background-color: var(--color-surface);
+          background-color: var(--color-surface-container);
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2372838d' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
           background-repeat: no-repeat;
           background-position: right 0.75rem center;

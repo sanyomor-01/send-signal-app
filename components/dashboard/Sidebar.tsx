@@ -38,7 +38,7 @@ export function DashboardSidebar() {
         padding: '1.25rem 1.25rem 1rem',
         borderBottom: '1px solid var(--color-outline-variant)',
       }}>
-        <Link href="/dashboard" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <div style={{
             width: '1.75rem', height: '1.75rem', borderRadius: '0.375rem',
             background: 'var(--color-primary)',

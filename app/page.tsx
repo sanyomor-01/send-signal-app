@@ -77,7 +77,13 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section style={{ padding: '5rem 2rem 4rem', textAlign: 'center', maxWidth: '52rem', margin: '0 auto' }}>
+      <section style={{ 
+        height: '70vh', 
+        padding: '5rem 2rem 4rem', 
+        textAlign: 'center', 
+        maxWidth: '52rem', 
+        margin: '0 auto'
+      }}>
         <h1 style={{ fontSize: 'var(--font-display-small-size)', fontWeight: 700, lineHeight: 1.15, color: 'var(--color-on-surface)', margin: '0 0 1.25rem', letterSpacing: '-0.03em' }}>
           Automate Personalized<br />WhatsApp Outreach
         </h1>

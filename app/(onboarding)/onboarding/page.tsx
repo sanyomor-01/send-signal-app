@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 import { OnboardingWelcome } from './steps/OnboardingWelcome'
 import { OnboardingWhatsApp } from './steps/OnboardingWhatsApp'
@@ -58,7 +59,7 @@ export default function OnboardingPage() {
         justifyContent: 'space-between',
         backgroundColor: 'var(--color-surface)',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <div style={{
             width: '1.75rem', height: '1.75rem', borderRadius: '0.375rem',
             background: 'var(--color-primary)',
@@ -71,7 +72,7 @@ export default function OnboardingPage() {
           <span style={{ fontWeight: 600, color: 'var(--color-on-surface)', fontSize: 'var(--font-title-medium-size)' }}>
             Send Signal
           </span>
-        </div>
+        </Link>
         <span style={{ fontSize: 'var(--font-label-medium-size)', color: 'var(--color-on-surface-variant)' }}>
           Setup {step + 1} of {STEPS.length}
         </span>

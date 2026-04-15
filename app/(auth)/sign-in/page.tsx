@@ -14,7 +14,7 @@ export default function SignInPage() {
   return (
     <div style={{ width: '100%', maxWidth: '26rem' }}>
       {/* Logo (mobile) */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem' }}>
+      <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center',justifyContent:'center', gap: '0.5rem', marginBottom: '2rem' }}>
         <div style={{
           width: '2rem', height: '2rem', borderRadius: '0.5rem', background: 'var(--color-primary)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
@@ -26,19 +26,17 @@ export default function SignInPage() {
         <span style={{ fontSize: 'var(--font-title-large-size)', fontWeight: 600, color: 'var(--color-on-surface)' }}>
           Send Signal
         </span>
-      </div>
+      </Link>
 
       <h1 style={{
-        fontSize: 'var(--font-headline-medium-size)',
-        fontWeight: 'var(--font-headline-medium-weight)',
+        fontSize: 'var(--font-headline-small-size)',
+        fontWeight: 'var(--font-headline-small-weight)',
         color: 'var(--color-on-surface)',
-        margin: '0 0 0.5rem',
+        margin: '0 0 2rem',
+        letterSpacing: '0',textAlign:'center',
       }}>
         Welcome back
       </h1>
-      <p style={{ fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)', margin: '0 0 2rem' }}>
-        Sign in to your Send Signal account.
-      </p>
 
       <form action={action} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         <FormField id="email" label="Email address" required error={state?.error?.email?.[0]}>

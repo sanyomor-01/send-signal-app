@@ -12,7 +12,7 @@ export default function SignInPage() {
   const [state, action, pending] = useActionState<FormState, FormData>(signIn, null)
 
   return (
-    <div style={{ width: '100%', maxWidth: '26rem' }}>
+    <div style={{ width: '100%', maxWidth: '23rem' }}>
       {/* Logo (mobile) */}
       <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center',justifyContent:'center', gap: '0.5rem', marginBottom: '2rem' }}>
         <div style={{
@@ -55,7 +55,7 @@ export default function SignInPage() {
       <p style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)' }}>
         Don&apos;t have an account?{' '}
         <Link href="/sign-up" style={{ color: 'var(--color-primary)', fontWeight: 500, textDecoration: 'none' }}>
-          Create one free
+          Sign up
         </Link>
       </p>
     </div>

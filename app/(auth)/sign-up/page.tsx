@@ -164,13 +164,20 @@ export default function SignUpPage() {
             value={password} 
             onChange={handlePasswordChange} 
           />
-          {password.length > 0 && (
-            <div style={{ marginTop: '0.625rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-              <Requirement satisfied={isLengthValid} text="Password must be at least 8 characters" />
-              <Requirement satisfied={hasNumber} text="Password must contain a number" />
-              <Requirement satisfied={hasSpecial} text="Password must contain a special character" />
-            </div>
-          )}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.375rem',
+            overflow: 'hidden',
+            transition: 'all 0.3s ease-in-out',
+            maxHeight: password.length > 0 ? '150px' : '0px',
+            opacity: password.length > 0 ? 1 : 0,
+            marginTop: password.length > 0 ? '0.625rem' : '0px',
+          }}>
+            <Requirement satisfied={isLengthValid} text="Password must be at least 8 characters" />
+            <Requirement satisfied={hasNumber} text="Password must contain a number" />
+            <Requirement satisfied={hasSpecial} text="Password must contain a special character" />
+          </div>
         </FormField>
 
         <Button id="sign-up-btn" type="submit" variant="primary" fullWidth loading={pending} size="lg">

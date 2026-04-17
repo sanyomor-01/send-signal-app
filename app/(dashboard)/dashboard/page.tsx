@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { Badge } from '@/components/ui/Badge'
+import { StatCard } from '@/components/dashboard/StatCard'
 
 export const metadata: Metadata = { title: 'Dashboard' }
 
@@ -52,38 +53,9 @@ export default async function DashboardPage() {
         Welcome back! Here&apos;s an overview of your activity.
       </p>
 
-      {/* Stat cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(12rem, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
         {statCards.map(({ label, value, icon, href }) => (
-          <Link key={label} href={href} style={{ textDecoration: 'none' }}>
-            <div style={{
-              padding: '1.25rem',
-              borderRadius: '0.75rem',
-              border: '1px solid var(--color-outline-variant)',
-              backgroundColor: 'var(--color-surface)',
-              cursor: 'pointer',
-              transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
-            }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--color-primary)'
-                ;(e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 12px rgba(255,91,4,0.1)'
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--color-outline-variant)'
-                ;(e.currentTarget as HTMLDivElement).style.boxShadow = 'none'
-              }}
-            >
-              <div style={{ fontSize: '1.5rem', marginBottom: '0.75rem' }}>{icon}</div>
-              <div style={{
-                fontSize: 'var(--font-headline-small-size)',
-                fontWeight: 700,
-                color: 'var(--color-on-surface)',
-                lineHeight: 1,
-                marginBottom: '0.375rem',
-              }}>{value}</div>
-              <div style={{ fontSize: 'var(--font-label-medium-size)', color: 'var(--color-on-surface-variant)' }}>{label}</div>
-            </div>
-          </Link>
+          <StatCard key={label} label={label} value={value} icon={icon} href={href} />
         ))}
       </div>
 

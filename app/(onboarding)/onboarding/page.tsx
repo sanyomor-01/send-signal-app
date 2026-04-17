@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { useState } from 'react'
 import { OnboardingWelcome } from './steps/OnboardingWelcome'
 import { OnboardingWhatsApp } from './steps/OnboardingWhatsApp'
@@ -50,44 +49,6 @@ export default function OnboardingPage() {
       display: 'flex',
       flexDirection: 'column',
     }}>
-      {/* Header */}
-      <header style={{
-        padding: '1.25rem 2rem',
-        borderBottom: '1px solid var(--color-outline-variant)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'var(--color-surface)',
-      }}>
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <div style={{
-            width: '1.75rem', height: '1.75rem', borderRadius: '0.375rem',
-            background: 'var(--color-primary)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-          }}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="14" height="14" style={{ marginLeft: '2px' }}>
-              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-            </svg>
-          </div>
-          <span style={{ fontWeight: 600, color: 'var(--color-on-surface)', fontSize: 'var(--font-title-medium-size)' }}>
-            Send Signal
-          </span>
-        </Link>
-        <span style={{ fontSize: 'var(--font-label-medium-size)', color: 'var(--color-on-surface-variant)' }}>
-          Setup {step + 1} of {STEPS.length}
-        </span>
-      </header>
-
-      {/* Progress bar */}
-      <div style={{ height: '3px', backgroundColor: 'var(--color-outline-variant)' }}>
-        <div style={{
-          height: '100%',
-          width: `${((step + 1) / STEPS.length) * 100}%`,
-          backgroundColor: 'var(--color-primary)',
-          transition: 'width 0.4s ease',
-        }} />
-      </div>
-
       {/* Step content */}
       <main style={{
         flex: 1,
@@ -98,25 +59,6 @@ export default function OnboardingPage() {
       }}>
         {stepComponents[step]}
       </main>
-
-      {/* Step indicators */}
-      <footer style={{
-        padding: '1rem 2rem',
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '0.5rem',
-        borderTop: '1px solid var(--color-outline-variant)',
-      }}>
-        {STEPS.map((s, i) => (
-          <div key={s.id} style={{
-            width: '0.5rem',
-            height: '0.5rem',
-            borderRadius: '50%',
-            backgroundColor: i <= step ? 'var(--color-primary)' : 'var(--color-outline-variant)',
-            transition: 'background-color 0.3s ease',
-          }} />
-        ))}
-      </footer>
     </div>
   )
 }

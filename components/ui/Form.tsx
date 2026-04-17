@@ -81,12 +81,13 @@ export function Input({ id, error, className = '', ...props }: InputProps) {
           font-size: var(--font-body-large-reg-size);
           font-weight: var(--font-body-large-reg-weight);
           line-height: 1.5;
-          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+          transition: background-color 0.3s ease, border-color 0.15s ease, box-shadow 0.15s ease;
           outline: none;
         }
         .ss-input::placeholder { color: var(--color-on-surface-variant); opacity: 0.7; }
         .ss-input:hover:not(:focus):not(.ss-input--error) { border-color: var(--color-outline); }
         .ss-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(255,91,4,0.12); }
+        .ss-input:valid:not(:focus) { background-color: var(--color-surface-container-highest); }
         .ss-input--error { border-color: var(--color-error); }
         .ss-input--error:focus { border-color: var(--color-error); box-shadow: 0 0 0 3px rgba(242,13,13,0.12); }
         .ss-input:disabled { background-color: var(--color-surface-container); opacity: 0.6; cursor: not-allowed; }

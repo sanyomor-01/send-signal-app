@@ -25,7 +25,7 @@ export default function LandingPage() {
 
           <div className="hidden md:flex gap-6 items-center justify-self-center">
             {['Features', 'Use cases', 'Pricing', 'Contact', 'Login'].map((item) => (
-              <Link key={item} href={item === 'Login' ? '/login' : `#${item.toLowerCase().replace(' ', '-')}`} className="text-[var(--color-on-surface)] no-underline text-[var(--font-body-medium-size)] font-medium hover:text-[var(--color-primary)] transition-colors">{item}</Link>
+              <Link key={item} href={item === 'Login' ? '/sign-in' : `#${item.toLowerCase().replace(' ', '-')}`} className="text-[var(--color-on-surface)] no-underline text-[var(--font-body-medium-size)] font-medium hover:text-[var(--color-primary)] transition-colors">{item}</Link>
             ))}
           </div>
 
@@ -57,7 +57,7 @@ export default function LandingPage() {
               {['Features', 'Use cases', 'Pricing', 'Contact', 'Login'].map((item) => (
                 <Link 
                   key={item} 
-                  href={item === 'Login' ? '/login' : `#${item.toLowerCase().replace(' ', '-')}`} 
+                  href={item === 'Login' ? '/sign-in' : `#${item.toLowerCase().replace(' ', '-')}`} 
                   onClick={() => setIsMenuOpen(false)}
                   className="text-[var(--color-on-surface)] no-underline text-[var(--font-body-large-reg-size)] py-3 border-b border-[var(--color-surface-variant)] last:border-0 font-medium"
                 >

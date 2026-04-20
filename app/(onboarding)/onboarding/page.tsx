@@ -33,13 +33,17 @@ export default function OnboardingPage() {
     setStep((s) => Math.min(s + 1, STEPS.length - 1))
   }
 
+  const back = () => {
+    setStep((s) => Math.max(s - 1, 0))
+  }
+
   const stepComponents = [
     <OnboardingWelcome key="welcome" onNext={next} />,
-    <OnboardingWhatsApp key="whatsapp" onNext={next} />,
-    <OnboardingImport key="import" onNext={next} />,
-    <OnboardingTemplate key="template" onNext={next} />,
-    <OnboardingCampaign key="campaign" data={data} onNext={next} />,
-    <OnboardingIntro key="intro" />,
+    <OnboardingWhatsApp key="whatsapp" onNext={next} onBack={back} />,
+    <OnboardingImport key="import" onNext={next} onBack={back} />,
+    <OnboardingTemplate key="template" onNext={next} onBack={back} />,
+    <OnboardingCampaign key="campaign" data={data} onNext={next} onBack={back} />,
+    <OnboardingIntro key="intro" onBack={back} />,
   ]
 
   return (
@@ -49,7 +53,6 @@ export default function OnboardingPage() {
       display: 'flex',
       flexDirection: 'column',
     }}>
-      {/* Step content */}
       <main style={{
         flex: 1,
         display: 'flex',
@@ -57,7 +60,12 @@ export default function OnboardingPage() {
         justifyContent: 'center',
         padding: '2rem 1.5rem',
       }}>
-        {stepComponents[step]}
+        <div style={{
+          width: '100%',
+          maxWidth: '42rem',
+        }}>
+          {stepComponents[step]}
+        </div>
       </main>
     </div>
   )

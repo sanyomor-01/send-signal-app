@@ -135,8 +135,10 @@
   --color-surface: #f9fafb;
   --color-surface-bright: #ffffff;
   --color-on-surface: #141b1f;
+  --color-on-surface-low: #626d76;
   --color-surface-variant: #e8ebee;
   --color-on-surface-variant: #434d54;
+  --color-on-surface-variant-low: #626d76;
   --color-surface-container: #eff3f5;
   --color-surface-container-high: #e6ecef;
   --color-surface-container-highest: #e0e7ea;

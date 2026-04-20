@@ -1,26 +1,37 @@
-import type { Metadata } from 'next'
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { getSession } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
 import { EmptyState, EMPTY_STATES } from '@/components/ui/EmptyState'
 
-export const metadata: Metadata = { title: 'Templates' }
+interface Template {
+  id: string
+  name: string
+  body: string
+  version: number
+  placeholderSchemaJson: { placeholders?: string[] } | null
+}
 
-export default async function TemplatesPage() {
-  const session = await getSession()
-  if (!session) return null
+export default function TemplatesPage() {
+  const [templates, setTemplates] = useState<Template[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const templates = await prisma.template.findMany({
-    where: { userId: session.userId, deletedAt: null, isArchived: false },
-    orderBy: { updatedAt: 'desc' },
-  })
+  useEffect(() => {
+    fetch('/api/templates')
+      .then(r => r.ok ? r.json() : Promise.reject(r.statusText))
+      .then(json => setTemplates(json.data?.data || []))
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <div style={{ padding: '2rem', maxWidth: '72rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
         <div>
           <h1 style={{ fontSize: 'var(--font-headline-large-size)', fontWeight: 500, color: 'var(--color-on-surface)', margin: '0 0 0.25rem' }}>Templates</h1>
-          <p style={{ margin: 0, fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)' }}>{templates.length} active templates</p>
+          <p style={{ margin: 0, fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)' }}>
+            {loading ? 'Loading...' : `${templates.length} active templates`}
+          </p>
         </div>
         <Link href="/dashboard/templates/create" style={{ textDecoration: 'none' }}>
           <button style={{
@@ -31,14 +42,14 @@ export default async function TemplatesPage() {
         </Link>
       </div>
 
-      {templates.length === 0 ? (
+      {!loading && templates.length === 0 ? (
         <div style={{ borderRadius: '0.75rem', border: '1px solid var(--color-outline-variant)', backgroundColor: 'var(--color-surface)' }}>
           <EmptyState {...EMPTY_STATES.templates} action={{ label: 'Create template', href: '/dashboard/templates/create' }} />
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(18rem, 1fr))', gap: '1rem' }}>
           {templates.map((t) => {
-            const placeholders = (t.placeholderSchemaJson as { placeholders?: string[] } | null)?.placeholders ?? []
+            const placeholders = t.placeholderSchemaJson?.placeholders ?? []
             return (
               <Link key={t.id} href={`/dashboard/templates/${t.id}`} style={{ textDecoration: 'none' }}>
                 <div style={{
@@ -85,9 +96,6 @@ export default async function TemplatesPage() {
                       ))}
                     </div>
                   )}
-                  <p style={{ margin: 0, fontSize: 'var(--font-label-small-size)', color: 'var(--color-on-surface-variant)' }}>
-                    Updated {new Date(t.updatedAt).toLocaleDateString()}
-                  </p>
                 </div>
               </Link>
             )

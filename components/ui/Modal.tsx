@@ -21,9 +21,12 @@ export function Modal({ open, onClose, title, size = 'md', children, footer }: M
     const el = dialogRef.current
     if (!el) return
     if (open) {
+      if (el.open) {
+        el.close()
+      }
       el.showModal?.()
-    } else {
-      el.close?.()
+    } else if (el.open) {
+      el.close()
     }
   }, [open])
 
@@ -60,7 +63,6 @@ export function Modal({ open, onClose, title, size = 'md', children, footer }: M
       {/* Dialog */}
       <dialog
         ref={dialogRef}
-        open={open}
         aria-modal="true"
         aria-labelledby="modal-title"
         style={{

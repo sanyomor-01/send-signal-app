@@ -4,14 +4,16 @@ import { useState } from 'react'
 import { FormField, Input } from '@/components/ui/Form'
 import { Button } from '@/components/ui/Button'
 import { ConfirmDialog } from '@/components/ui/Modal'
+import { OnboardingProgress } from '@/components/onboarding/OnboardingProgress'
 import { OnboardingData } from '../page'
 
 interface Props {
   data: OnboardingData
   onNext: (data?: Partial<OnboardingData>) => void
+  onBack: () => void
 }
 
-export function OnboardingCampaign({ data, onNext }: Props) {
+export function OnboardingCampaign({ data, onNext, onBack }: Props) {
   const [name, setName] = useState('My first campaign')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -25,10 +27,13 @@ export function OnboardingCampaign({ data, onNext }: Props) {
     setConfirmOpen(false)
     setLoading(true)
     setError(null)
+    const controller = new AbortController()
+
     try {
       const res = await fetch('/api/campaigns', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           name,
           whatsappAccountId: data.whatsappAccountId,
@@ -50,69 +55,103 @@ export function OnboardingCampaign({ data, onNext }: Props) {
   }
 
   return (
-    <div style={{ maxWidth: '30rem', width: '100%' }}>
-      <h2 style={{ fontSize: 'var(--font-headline-medium-size)', fontWeight: 500, color: 'var(--color-on-surface)', margin: '0 0 0.5rem' }}>
-        Launch your first campaign
-      </h2>
-      <p style={{ fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)', margin: '0 0 2rem', lineHeight: 1.6 }}>
-        Review your setup and confirm before sending.
-      </p>
-
-      {/* Summary */}
-      <div style={{
-        borderRadius: '0.75rem', border: '1px solid var(--color-outline-variant)',
-        overflow: 'hidden', marginBottom: '1.5rem',
-      }}>
-        {[
-          { label: 'WhatsApp account', value: data.whatsappAccountId ? '✅ Connected' : '⚠️ Not set', ok: !!data.whatsappAccountId },
-          { label: 'Template', value: data.templateId ? '✅ Ready' : '⚠️ Not set', ok: !!data.templateId },
-          { label: 'Recipients', value: recipientCount > 0 ? `${recipientCount} leads` : '⚠️ No leads', ok: recipientCount > 0 },
-        ].map(({ label, value, ok }, i) => (
-          <div key={label} style={{
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            padding: '0.875rem 1rem',
-            borderTop: i > 0 ? '1px solid var(--color-outline-variant)' : 'none',
-            backgroundColor: 'var(--color-surface)',
-          }}>
-            <span style={{ fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)' }}>{label}</span>
-            <span style={{ fontSize: 'var(--font-body-medium-size)', fontWeight: 600, color: ok ? 'var(--color-success)' : 'var(--color-warning)' }}>{value}</span>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ marginBottom: '1.5rem' }}>
-        <FormField id="campaign-name" label="Campaign name" required>
-          <Input id="campaign-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Campaign name" required />
-        </FormField>
-      </div>
-
-      {error && (
-        <p style={{ color: 'var(--color-error)', fontSize: 'var(--font-body-medium-size)', marginBottom: '1rem' }}>{error}</p>
-      )}
-
-      {!canLaunch && (
-        <div style={{
-          padding: '0.75rem 1rem', borderRadius: '0.5rem',
-          backgroundColor: 'var(--color-warning-container)',
-          color: 'var(--color-on-warning-container)',
-          fontSize: 'var(--font-body-medium-size)',
-          marginBottom: '1rem',
+    <div style={{ 
+      maxWidth: '36rem', 
+      width: '100%', 
+      textAlign: 'left', 
+      minHeight: '34rem', 
+      display: 'flex', 
+      flexDirection: 'column',
+      padding: '2rem',
+      borderRadius: '1rem',
+      border: '1px solid var(--color-outline-variant)',
+      backgroundColor: 'var(--color-surface)',
+    }}>
+      <div style={{ flex: 1 }}>
+        <h1 style={{
+          fontSize: 'var(--font-headline-medium-size)',
+          fontWeight: 'var(--font-headline-medium-weight)',
+          color: 'var(--color-on-surface)',
+          margin: '0 0 0.5rem',
+          lineHeight: 1.2,
         }}>
-          Complete the previous steps before launching a campaign.
-        </div>
-      )}
+          Welcome to Send Signal
+        </h1>
 
-      <div style={{ display: 'flex', gap: '0.75rem' }}>
-        <Button id="campaign-skip-btn" variant="secondary" onClick={() => onNext()}>Skip for now</Button>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <OnboardingProgress stepIndex={5} />
+        </div>
+
+        <h3 style={{
+          fontSize: 'var(--font-title-large-size)',
+          fontWeight: 'var(--font-title-large-weight)',
+          color: 'var(--color-on-surface)',
+          margin: '0 0 0.5rem',
+          lineHeight: 1.2,
+        }}>
+          Launch your first campaign
+        </h3>
+        <p style={{ fontSize: 'var(--font-body-medium-reg-size)', color: 'var(--color-on-surface-variant)', margin: '0 0 1.5rem', lineHeight: 1.6 }}>
+          Review your setup and confirm before sending.
+        </p>
+
+        {/* Summary */}
+        <div style={{
+          borderRadius: '0.75rem', border: '1px solid var(--color-outline-variant)',
+          overflow: 'hidden', marginBottom: '1.5rem',
+        }}>
+          {[
+            { label: 'WhatsApp account', value: data.whatsappAccountId ? '✅ Connected' : '⚠️ Not set', ok: !!data.whatsappAccountId },
+            { label: 'Template', value: data.templateId ? '✅ Ready' : '⚠️ Not set', ok: !!data.templateId },
+            { label: 'Recipients', value: recipientCount > 0 ? `${recipientCount} leads` : '⚠️ No leads', ok: recipientCount > 0 },
+          ].map(({ label, value, ok }, i) => (
+            <div key={label} style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              padding: '0.875rem 1rem',
+              borderTop: i > 0 ? '1px solid var(--color-outline-variant)' : 'none',
+              backgroundColor: 'var(--color-surface)',
+            }}>
+              <span style={{ fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)' }}>{label}</span>
+              <span style={{ fontSize: 'var(--font-body-medium-size)', fontWeight: 600, color: ok ? 'var(--color-success)' : 'var(--color-warning)' }}>{value}</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginBottom: '1.5rem' }}>
+          <FormField id="campaign-name" label="Campaign name" required>
+            <Input id="campaign-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Campaign name" required />
+          </FormField>
+        </div>
+
+        {error && (
+          <p style={{ color: 'var(--color-error)', fontSize: 'var(--font-body-medium-size)', marginBottom: '1rem' }}>{error}</p>
+        )}
+
+        {!canLaunch && (
+          <div style={{
+            padding: '0.75rem 1rem', borderRadius: '0.5rem',
+            backgroundColor: 'var(--color-warning-container)',
+            color: 'var(--color-on-warning-container)',
+            fontSize: 'var(--font-body-medium-size)',
+            marginBottom: '1rem',
+          }}>
+            Complete the previous steps before launching a campaign.
+          </div>
+        )}
+      </div>
+
+      <div style={{ marginTop: 'auto', paddingTop: '2rem', display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
+        <Button id="campaign-back-btn" variant="secondary" onClick={onBack}>
+          Back
+        </Button>
         <Button
           id="campaign-launch-btn"
           variant="primary"
-          fullWidth
           disabled={!canLaunch}
           loading={loading}
           onClick={() => setConfirmOpen(true)}
         >
-          Launch campaign →
+          Launch campaign
         </Button>
       </div>
 

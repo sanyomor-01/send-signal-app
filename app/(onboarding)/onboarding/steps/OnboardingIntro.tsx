@@ -1,7 +1,12 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 
-export function OnboardingIntro() {
+interface Props {
+  onBack?: () => void
+}
+
+export function OnboardingIntro(_props: Props) {
+  const _unused = _props
   const sections = [
     { href: '/dashboard/leads', icon: '👥', title: 'Leads', desc: 'View, filter, and manage all your contacts' },
     { href: '/dashboard/campaigns', icon: '📢', title: 'Campaigns', desc: 'Create, monitor, and control message campaigns' },
@@ -55,7 +60,7 @@ export function OnboardingIntro() {
 
       <Link href="/dashboard" style={{ textDecoration: 'none' }}>
         <Button id="onboarding-finish-btn" variant="primary" size="lg" fullWidth>
-          Enter dashboard →
+          Enter dashboard
         </Button>
       </Link>
     </div>

@@ -131,6 +131,21 @@ model Session {
 }
 
 // ─────────────────────────────────────────────
+// PASSWORD RESET TOKENS
+// ─────────────────────────────────────────────
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([email, token])
+  @@map("password_reset_tokens")
+}
+
+// ─────────────────────────────────────────────
 // WHATSAPP ACCOUNTS
 // ─────────────────────────────────────────────
 

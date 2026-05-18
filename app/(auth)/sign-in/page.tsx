@@ -43,7 +43,20 @@ export default function SignInPage() {
           <Input id="email" name="email" type="email" required autoComplete="email" error={state?.error?.email?.[0]} />
         </FormField>
 
-        <FormField id="password" label="Password" required error={state?.error?.password?.[0]}>
+        <FormField
+          id="password"
+          label="Password"
+          required
+          error={state?.error?.password?.[0]}
+          labelRight={
+            <Link
+              href="/forgot-password"
+              style={{ color: 'var(--color-primary)', fontWeight: 500, textDecoration: 'none' }}
+            >
+              Forgot password?
+            </Link>
+          }
+        >
           <Input id="password" name="password" type="password" required autoComplete="current-password" error={state?.error?.password?.[0]} />
         </FormField>
 

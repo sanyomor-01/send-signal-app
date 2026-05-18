@@ -4,6 +4,8 @@ import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { hashPassword, verifyPassword, createToken, setSessionCookie } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { sendEmail, generatePasswordResetEmailHtml } from '@/lib/mail'
+import crypto from 'crypto'
 
 // ── Sign Up ───────────────────────────────────────
 
@@ -79,6 +81,95 @@ export async function signIn(_prevState: unknown, formData: FormData) {
   await setSessionCookie(token)
 
   redirect('/dashboard')
+}
+
+// ── Reset Password ────────────────────────────────
+
+const ResetRequestSchema = z.object({
+  email: z.string().email('Valid email required'),
+})
+
+export async function requestPasswordReset(_prevState: unknown, formData: FormData) {
+  const raw = {
+    email: formData.get('email'),
+  }
+
+  const result = ResetRequestSchema.safeParse(raw)
+  if (!result.success) {
+    return { error: result.error.flatten().fieldErrors }
+  }
+
+  const { email } = result.data
+
+  const user = await prisma.user.findUnique({ where: { email } })
+  if (user) {
+    const token = crypto.randomBytes(32).toString('hex')
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60) // 1 hour
+
+    // Clean up any old tokens for this email
+    await prisma.passwordResetToken.deleteMany({
+      where: { email }
+    })
+
+    await prisma.passwordResetToken.create({
+      data: { email, token, expiresAt },
+    })
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const resetLink = `${appUrl}/reset-password?token=${token}`
+    const html = generatePasswordResetEmailHtml(resetLink)
+
+    await sendEmail({
+      to: email,
+      subject: 'Reset your Send Signal password',
+      html,
+    })
+  } else {
+    // Delay to mitigate timing attacks
+    await new Promise(resolve => setTimeout(resolve, 800))
+  }
+
+  return { success: true, email }
+}
+
+const ResetPasswordSchema = z.object({
+  token: z.string().min(1, 'Token is required'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+})
+
+export async function resetPassword(_prevState: unknown, formData: FormData) {
+  const raw = {
+    token: formData.get('token'),
+    password: formData.get('password'),
+  }
+
+  const result = ResetPasswordSchema.safeParse(raw)
+  if (!result.success) {
+    return { error: result.error.flatten().fieldErrors }
+  }
+
+  const { token, password } = result.data
+
+  const resetToken = await prisma.passwordResetToken.findUnique({
+    where: { token },
+  })
+
+  if (!resetToken || resetToken.expiresAt < new Date()) {
+    return { error: { token: ['Invalid or expired reset token'] } }
+  }
+
+  const passwordHash = await hashPassword(password)
+
+  await prisma.user.update({
+    where: { email: resetToken.email },
+    data: { passwordHash },
+  })
+
+  await prisma.passwordResetToken.deleteMany({
+    where: { email: resetToken.email },
+  })
+
+  redirect('/sign-in')
 }
 
 // ── Sign Out ──────────────────────────────────────

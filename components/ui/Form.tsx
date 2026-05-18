@@ -7,19 +7,23 @@ import React from 'react'
 interface FormFieldProps {
   id: string
   label: string
+  labelRight?: React.ReactNode
   required?: boolean
   error?: string
   hint?: string
   children: React.ReactNode
 }
 
-export function FormField({ id, label, required, error, hint, children }: FormFieldProps) {
+export function FormField({ id, label, labelRight, required, error, hint, children }: FormFieldProps) {
   return (
     <div className="form-field">
-      <label htmlFor={id} className="form-field__label">
-        {label}
-        {required && <span className="form-field__required" aria-label="required"> *</span>}
-      </label>
+      <div className="form-field__header">
+        <label htmlFor={id} className="form-field__label">
+          {label}
+          {required && <span className="form-field__required" aria-label="required"> *</span>}
+        </label>
+        {labelRight && <div className="form-field__label-right">{labelRight}</div>}
+      </div>
       {children}
       {error && (
         <p id={`${id}-error`} className="form-field__error" role="alert" aria-live="polite">
@@ -30,11 +34,19 @@ export function FormField({ id, label, required, error, hint, children }: FormFi
 
       <style jsx>{`
         .form-field { display: flex; flex-direction: column; gap: 0.375rem; }
+        .form-field__header {
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+        }
         .form-field__label {
           font-size: var(--font-label-large-size);
           font-weight: var(--font-label-large-weight);
           color: var(--color-on-surface-variant);
           line-height: 1.4;
+        }
+        .form-field__label-right {
+          font-size: var(--font-label-medium-size);
         }
         .form-field__required { color: var(--color-error); }
         .form-field__error {

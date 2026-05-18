@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken } from '@/lib/auth'
 
-const PUBLIC_ROUTES = ['/', '/sign-in', '/sign-up', '/api/auth/sign-in', '/api/auth/sign-up']
-const AUTH_ROUTES = ['/sign-in', '/sign-up']
+const PUBLIC_ROUTES = ['/', '/sign-in', '/sign-up', '/forgot-password', '/reset-password', '/api/auth/sign-in', '/api/auth/sign-up']
+const AUTH_ROUTES = ['/sign-in', '/sign-up', '/forgot-password', '/reset-password']
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl

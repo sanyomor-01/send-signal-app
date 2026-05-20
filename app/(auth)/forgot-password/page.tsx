@@ -6,6 +6,7 @@ import { requestPasswordReset } from '../actions'
 import { FormField, Input } from '@/components/ui/Form'
 import { Button } from '@/components/ui/Button'
 import { useRouter } from 'next/navigation'
+import { LogoIcon } from '@/components/brand/LogoIcon'
 
 type FormState = { error?: Record<string, string[]>, success?: boolean, email?: string } | null
 
@@ -59,9 +60,7 @@ export default function ForgotPasswordPage() {
           width: '2rem', height: '2rem', borderRadius: '0.5rem', background: 'var(--color-primary)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
         }}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="16" height="16" style={{ marginLeft: '2px' }}>
-            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-          </svg>
+          <LogoIcon size={18} color="white" strokeWidth={2.2} />
         </div>
         <span style={{ fontSize: 'var(--font-title-large-size)', fontWeight: 600, color: 'var(--color-on-surface)' }}>
           Send Signal

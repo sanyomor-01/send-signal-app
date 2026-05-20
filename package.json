@@ -14,6 +14,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/papaparse": "^5.5.2",
     "bcryptjs": "^3.0.3",
+    "iconsax-react": "^0.0.8",
     "jose": "^6.2.2",
     "libphonenumber-js": "^1.12.41",
     "next": "16.2.3",

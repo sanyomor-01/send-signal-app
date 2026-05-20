@@ -54,7 +54,7 @@ export function DashboardHeader({ fullName, email }: DashboardHeaderProps) {
 
   return (
     <header style={{
-      height: '3.5rem',
+      height: '4rem',
       flexShrink: 0,
       display: 'flex',
       alignItems: 'center',
@@ -64,7 +64,26 @@ export function DashboardHeader({ fullName, email }: DashboardHeaderProps) {
       backgroundColor: 'var(--color-surface)',
     }}>
       {/* Profile trigger */}
-      <div ref={dropdownRef} style={{ position: 'relative' }}>
+      <div ref={dropdownRef} style={{ position: 'relative', zIndex: isOpen ? 1000 : undefined }}>
+        {/* Overlay backdrop when open */}
+        {isOpen && (
+          <div
+            id="profile-overlay"
+            onClick={() => setIsOpen(false)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(15, 23, 42, 0.3)', // mild overlay
+              backdropFilter: 'blur(4px)', // premium styling guidelines!
+              zIndex: 999,
+              animation: 'profileOverlayFadeIn 0.2s ease-out',
+            }}
+          />
+        )}
+
         <button
           id="profile-menu-trigger"
           onClick={() => setIsOpen(!isOpen)}
@@ -77,38 +96,13 @@ export function DashboardHeader({ fullName, email }: DashboardHeaderProps) {
             padding: '0.375rem 0.5rem',
             borderRadius: '0.5rem',
             border: 'none',
-            background: isOpen ? 'var(--color-surface-variant)' : 'transparent',
+            background: 'none',
             cursor: 'pointer',
             transition: 'background-color 0.15s ease',
-          }}
-          onMouseEnter={(e) => {
-            if (!isOpen) e.currentTarget.style.backgroundColor = 'var(--color-surface-variant)'
-          }}
-          onMouseLeave={(e) => {
-            if (!isOpen) e.currentTarget.style.backgroundColor = 'transparent'
+            position: 'relative',
+            zIndex: isOpen ? 1001 : undefined,
           }}
         >
-          {/* Avatar */}
-          <div style={{
-            width: '2rem',
-            height: '2rem',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-container))',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}>
-            <span style={{
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              color: 'var(--color-on-primary)',
-              lineHeight: 1,
-              letterSpacing: '0.02em',
-            }}>
-              {initials}
-            </span>
-          </div>
           {/* Name */}
           <span style={{
             fontSize: 'var(--font-body-medium-size)',
@@ -121,24 +115,27 @@ export function DashboardHeader({ fullName, email }: DashboardHeaderProps) {
           }}>
             {displayName}
           </span>
-          {/* Chevron */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--color-on-surface-variant)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{
-              transition: 'transform 0.2s ease',
-              transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-            }}
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+          {/* Avatar */}
+          <div style={{
+            width: '2.5rem',
+            height: '2.5rem',
+            borderRadius: '50%',
+            border: '1.5px solid var(--color-outline-normal)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            <span style={{
+              fontSize: '0.875rem',
+              fontWeight: 700,
+              color: 'var(--color-on-surface)',
+              lineHeight: 1,
+              letterSpacing: '0.02em',
+            }}>
+              {initials}
+            </span>
+          </div>
         </button>
 
         {/* Dropdown */}
@@ -155,7 +152,7 @@ export function DashboardHeader({ fullName, email }: DashboardHeaderProps) {
               border: '1px solid var(--color-outline-variant)',
               borderRadius: '0.75rem',
               boxShadow: '0 4px 24px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08)',
-              zIndex: 100,
+              zIndex: 1000,
               overflow: 'hidden',
               animation: 'profileDropdownIn 0.15s ease-out',
             }}
@@ -170,7 +167,7 @@ export function DashboardHeader({ fullName, email }: DashboardHeaderProps) {
                   width: '2.5rem',
                   height: '2.5rem',
                   borderRadius: '50%',
-                  background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-container))',
+                  border: '1.5px solid var(--color-outline-normal)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -179,7 +176,7 @@ export function DashboardHeader({ fullName, email }: DashboardHeaderProps) {
                   <span style={{
                     fontSize: '0.875rem',
                     fontWeight: 700,
-                    color: 'var(--color-on-primary)',
+                    color: 'var(--color-on-surface)',
                     lineHeight: 1,
                   }}>
                     {initials}
@@ -272,6 +269,14 @@ export function DashboardHeader({ fullName, email }: DashboardHeaderProps) {
           to {
             opacity: 1;
             transform: translateY(0) scale(1);
+          }
+        }
+        @keyframes profileOverlayFadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
           }
         }
       `}</style>

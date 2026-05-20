@@ -68,7 +68,7 @@ export default async function AnalyticsPage() {
     <div style={{ padding: "2rem", maxWidth: "72rem" }}>
       <h1
         style={{
-          fontSize: "var(--font-headline-large-size)",
+          fontSize: "var(--font-title-large-size)",
           fontWeight: 500,
           color: "var(--color-on-surface)",
           margin: "0 0 1.5rem",

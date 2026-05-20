@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { LogoIcon } from '@/components/brand/LogoIcon'
 
 export default function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -16,9 +17,7 @@ export default function LandingPage() {
           {/* Logo - Stays left */}
           <div className="flex items-center gap-2 justify-self-start">
             <div className="w-7 h-7 rounded-sm bg-[var(--color-primary)] flex items-center justify-center shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="14" height="14" style={{ marginLeft: '2px' }}>
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-              </svg>
+              <LogoIcon size={17} color="white" strokeWidth={2.2} />
             </div>
             <span className="font-bold text-[var(--color-on-surface)] text-[var(--font-title-medium-size)]">Send Signal</span>
           </div>

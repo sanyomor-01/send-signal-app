@@ -1,11 +1,12 @@
 'use client'
 
 interface Props {
-  stepIndex: number // 0 to 5
+  stepIndex: number // 0 to 4
+  completedSteps?: boolean[]
 }
 
-export function OnboardingProgress({ stepIndex }: Props) {
-  const steps = [1, 2, 3, 4, 5];
+export function OnboardingProgress({ stepIndex, completedSteps = [] }: Props) {
+  const steps = [0, 1, 2, 3, 4];
   
   return (
     <div style={{
@@ -15,16 +16,16 @@ export function OnboardingProgress({ stepIndex }: Props) {
       width: '100%',
     }}>
       {steps.map((stepNumber, index) => {
-        // Concept: We have 5 steps in the indicator.
-        // index 0 is Account Created
-        // index 1 is Welcome
-        // index 2 is WhatsApp
-        // index 3 is Import
-        // index 4 is Template/Campaign
+        // Concept: We have 5 steps in the indicator:
+        // index 0: Welcome
+        // index 1: WhatsApp
+        // index 2: Import
+        // index 3: Template
+        // index 4: Campaign
         
-        const isCompleted = index < stepIndex;
+        const isCompleted = !!completedSteps[index];
         const isCurrent = index === stepIndex;
-        const isUpcoming = index > stepIndex;
+        const isUpcoming = !isCompleted && !isCurrent;
 
         let bgColor = 'var(--color-surface-container-highest)';
         let textColor = 'var(--color-on-surface-variant)';

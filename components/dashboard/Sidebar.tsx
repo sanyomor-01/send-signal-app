@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { signOut } from '@/app/(auth)/actions'
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: '⊞', exact: true },
@@ -12,6 +11,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/messages', label: 'Messages', icon: '💬' },
   { href: '/dashboard/conversations', label: 'Conversations', icon: '💭' },
   { href: '/dashboard/analytics', label: 'Analytics', icon: '📊' },
+  { href: '/dashboard/settings', label: 'Settings', icon: '⚙️' },
 ]
 
 export function DashboardSidebar() {
@@ -87,33 +87,6 @@ export function DashboardSidebar() {
           })}
         </ul>
       </nav>
-
-      {/* Bottom — settings & sign out */}
-      <div style={{ padding: '0.75rem 0.625rem', borderTop: '1px solid var(--color-outline-variant)' }}>
-        <Link href="/dashboard/settings" style={{
-          display: 'flex', alignItems: 'center', gap: '0.625rem',
-          padding: '0.5rem 0.75rem', borderRadius: '0.5rem', textDecoration: 'none',
-          fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)',
-        }}>
-          <span style={{ fontSize: '1rem', width: '1.25rem', textAlign: 'center' }}>⚙️</span>
-          Settings
-        </Link>
-        <form action={signOut}>
-          <button
-            type="submit"
-            style={{
-              width: '100%', display: 'flex', alignItems: 'center', gap: '0.625rem',
-              padding: '0.5rem 0.75rem', borderRadius: '0.5rem',
-              border: 'none', background: 'none', cursor: 'pointer',
-              fontSize: 'var(--font-body-medium-size)', color: 'var(--color-on-surface-variant)',
-              textAlign: 'left',
-            }}
-          >
-            <span style={{ fontSize: '1rem', width: '1.25rem', textAlign: 'center' }}>↩</span>
-            Sign out
-          </button>
-        </form>
-      </div>
     </aside>
   )
 }

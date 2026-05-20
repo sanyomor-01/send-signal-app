@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useState } from 'react'
+import { useActionState, useState, Suspense } from 'react'
 import Link from 'next/link'
 import { resetPassword } from '../actions'
 import { FormField, Input } from '@/components/ui/Form'
@@ -25,6 +25,14 @@ function Requirement({ satisfied, text }: { satisfied: boolean, text: string }) 
 }
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div style={{ width: '100%', maxWidth: '23rem', textAlign: 'center', padding: '2rem', color: 'var(--color-on-surface-variant)' }}>Loading...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
+  )
+}
+
+function ResetPasswordContent() {
   const [state, action, pending] = useActionState<FormState, FormData>(resetPassword, null)
   const searchParams = useSearchParams()
   const router = useRouter()

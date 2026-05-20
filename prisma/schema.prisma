@@ -91,6 +91,7 @@ enum ConversationSource {
 model User {
   id           String   @id @default(uuid())
   companyName  String   @map("company_name")
+  fullName     String?  @map("full_name")
   email        String   @unique
   passwordHash String   @map("password_hash")
   role         UserRole @default(OWNER)

@@ -12,6 +12,7 @@ const SESSION_DURATION = 60 * 60 * 24 * 7 // 7 days in seconds
 export type SessionPayload = {
   userId: string
   email: string
+  fullName: string | null
   role: string
 }
 

@@ -30,6 +30,9 @@ export default function SignUpPage() {
   const [companyName, setCompanyName] = useState('')
   const [isCompanyBlurred, setIsCompanyBlurred] = useState(false)
 
+  const [fullName, setFullName] = useState('')
+  const [isFullNameBlurred, setIsFullNameBlurred] = useState(false)
+
   const [email, setEmail] = useState('')
   const [hasStartedTypingEmail, setHasStartedTypingEmail] = useState(false)
 
@@ -45,6 +48,18 @@ export default function SignUpPage() {
 
   const handleCompanyBlur = () => {
     setIsCompanyBlurred(true)
+  }
+
+  const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/[^a-zA-Z\s]/g, '')
+    setFullName(val)
+    if (submitErrors?.fullName) {
+      setSubmitErrors(prev => prev ? { ...prev, fullName: [] } : null)
+    }
+  }
+
+  const handleFullNameBlur = () => {
+    setIsFullNameBlurred(true)
   }
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,6 +80,7 @@ export default function SignUpPage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     const errors: Record<string, string[]> = {}
     if (!companyName) errors.companyName = ['Enter Your Company Name']
+    if (!fullName) errors.fullName = ['Enter Your Full Name']
     if (!email) errors.email = ['Enter Your Work Email']
     if (!password) errors.password = ['Choose a Password']
 
@@ -82,6 +98,11 @@ export default function SignUpPage() {
   let companyErrorText = errors.companyName?.[0]
   if (!companyErrorText && isCompanyBlurred && companyName.trim() === '') {
     companyErrorText = "Field must not be empty"
+  }
+
+  let fullNameErrorText = errors.fullName?.[0]
+  if (!fullNameErrorText && isFullNameBlurred && fullName.trim() === '') {
+    fullNameErrorText = "Field must not be empty"
   }
 
   let emailErrorText = errors.email?.[0]
@@ -137,6 +158,19 @@ export default function SignUpPage() {
             value={companyName} 
             onChange={handleCompanyChange} 
             onBlur={handleCompanyBlur} 
+          />
+        </FormField>
+
+        <FormField id="fullName" label="Full name" required error={fullNameErrorText}>
+          <Input 
+            id="fullName" 
+            name="fullName" 
+            type="text" 
+            required 
+            error={fullNameErrorText} 
+            value={fullName} 
+            onChange={handleFullNameChange} 
+            onBlur={handleFullNameBlur} 
           />
         </FormField>
 

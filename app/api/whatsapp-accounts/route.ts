@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { encrypt } from '@/lib/encryption'
+import { encrypt, decrypt } from '@/lib/encryption'
 import { successResponse, errorResponse, unauthorizedResponse, serverErrorResponse } from '@/lib/api'
 import { z } from 'zod'
 import * as crypto from 'crypto'
@@ -100,33 +100,80 @@ export async function POST(request: NextRequest) {
 
   // DEV MODE: Skip Meta API call and create mock account
   const isDevMock = process.env.NODE_ENV === 'development' || token === 'DEV_TEST_TOKEN_2024'
-  
-  const actualVerifyToken = isDevMock ? 'dev_verify_token_12345678' : (wvt || crypto.randomBytes(8).toString('hex'))
-
-  const accessTokenEncrypted = isDevMock ? 'dev_encrypted_token' : encrypt(token)
-  const webhookVerifyTokenEncrypted = encrypt(actualVerifyToken)
 
   try {
-    const account = await prisma.whatsappAccount.create({
-      data: {
-        userId: session.userId,
-        accountName: name,
-        phoneNumberId: pnId,
-        businessAccountId: baId,
-        accessTokenEncrypted,
-        webhookVerifyTokenEncrypted,
-        displayPhoneNumber: dpn,
-      },
-      select: {
-        id: true,
-        accountName: true,
-        displayPhoneNumber: true,
-        businessAccountId: true,
-        phoneNumberId: true,
-        isActive: true,
-        createdAt: true,
-      },
+    const existing = await prisma.whatsappAccount.findUnique({
+      where: { phoneNumberId: pnId }
     })
+
+    let account;
+    let actualVerifyToken = '';
+
+    if (existing) {
+      if (existing.userId !== session.userId) {
+        return errorResponse('A WhatsApp account with this Phone Number ID is already connected to another user', 409)
+      }
+
+      // Reuse the existing verify token so they don't have to change it in the Meta Developer portal
+      if (existing.webhookVerifyTokenEncrypted) {
+        try {
+          actualVerifyToken = decrypt(existing.webhookVerifyTokenEncrypted)
+        } catch {
+          actualVerifyToken = isDevMock ? 'dev_verify_token_12345678' : (wvt || crypto.randomBytes(8).toString('hex'))
+        }
+      } else {
+        actualVerifyToken = isDevMock ? 'dev_verify_token_12345678' : (wvt || crypto.randomBytes(8).toString('hex'))
+      }
+
+      const accessTokenEncrypted = isDevMock ? 'dev_encrypted_token' : encrypt(token)
+      const webhookVerifyTokenEncrypted = encrypt(actualVerifyToken)
+
+      account = await prisma.whatsappAccount.update({
+        where: { phoneNumberId: pnId },
+        data: {
+          accountName: name,
+          businessAccountId: baId,
+          accessTokenEncrypted,
+          webhookVerifyTokenEncrypted,
+          displayPhoneNumber: dpn,
+          isActive: true,
+        },
+        select: {
+          id: true,
+          accountName: true,
+          displayPhoneNumber: true,
+          businessAccountId: true,
+          phoneNumberId: true,
+          isActive: true,
+          createdAt: true,
+        },
+      })
+    } else {
+      actualVerifyToken = isDevMock ? 'dev_verify_token_12345678' : (wvt || crypto.randomBytes(8).toString('hex'))
+      const accessTokenEncrypted = isDevMock ? 'dev_encrypted_token' : encrypt(token)
+      const webhookVerifyTokenEncrypted = encrypt(actualVerifyToken)
+
+      account = await prisma.whatsappAccount.create({
+        data: {
+          userId: session.userId,
+          accountName: name,
+          phoneNumberId: pnId,
+          businessAccountId: baId,
+          accessTokenEncrypted,
+          webhookVerifyTokenEncrypted,
+          displayPhoneNumber: dpn,
+        },
+        select: {
+          id: true,
+          accountName: true,
+          displayPhoneNumber: true,
+          businessAccountId: true,
+          phoneNumberId: true,
+          isActive: true,
+          createdAt: true,
+        },
+      })
+    }
 
     const user = await prisma.user.findUnique({ where: { id: session.userId } })
     if (user && (!user.companyName || user.companyName === 'My Company')) {
@@ -144,7 +191,7 @@ export async function POST(request: NextRequest) {
       account: { ...account, userId: session.userId }, 
       webhookVerifyToken: actualVerifyToken,
       callbackUrl
-    }, 'WhatsApp account connected', 201)
+    }, 'WhatsApp account connected', existing ? 200 : 201)
   } catch (err: unknown) {
     if ((err as { code?: string }).code === 'P2002') {
       return errorResponse('A WhatsApp account with this Phone Number ID is already connected', 409)

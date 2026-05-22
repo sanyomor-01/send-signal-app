@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
     if (!file) return errorResponse('No file provided', 400)
+    if (file.size > 5 * 1024 * 1024) return errorResponse('CSV file must be 5MB or smaller', 413)
 
     const text = await file.text()
 

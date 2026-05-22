@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { Button } from "./Button";
 import {
   Profile2User,
@@ -89,11 +90,19 @@ export function EmptyState({
       </div>
       {action &&
         (action.href ? (
-          <a href={action.href} style={{ textDecoration: "none" }}>
-            <Button variant="primary" size="md">
-              {action.label}
-            </Button>
-          </a>
+          action.href.startsWith("/") ? (
+            <Link href={action.href} style={{ textDecoration: "none" }}>
+              <Button variant="primary" size="md">
+                {action.label}
+              </Button>
+            </Link>
+          ) : (
+            <a href={action.href} style={{ textDecoration: "none" }}>
+              <Button variant="primary" size="md">
+                {action.label}
+              </Button>
+            </a>
+          )
         ) : (
           <Button variant="primary" size="md" onClick={action.onClick}>
             {action.label}

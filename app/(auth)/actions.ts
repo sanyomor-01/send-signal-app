@@ -4,8 +4,14 @@ import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { hashPassword, verifyPassword, createToken, setSessionCookie } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { sendEmail, generatePasswordResetEmailHtml } from '@/lib/mail'
+import { consumeRateLimit, getClientIp } from '@/lib/rate-limit'
 import crypto from 'crypto'
+
+function hashResetToken(token: string): string {
+  return crypto.createHash('sha256').update(token).digest('hex')
+}
 
 // ── Sign Up ───────────────────────────────────────
 
@@ -17,6 +23,8 @@ const SignUpSchema = z.object({
 })
 
 export async function signUp(_prevState: unknown, formData: FormData) {
+  const headerStore = await headers()
+  const ip = getClientIp(headerStore)
   const raw = {
     companyName: formData.get('companyName'),
     fullName: formData.get('fullName'),
@@ -30,6 +38,10 @@ export async function signUp(_prevState: unknown, formData: FormData) {
   }
 
   const { companyName, fullName, email, password } = result.data
+  const limited = consumeRateLimit(`signup:${ip}:${email.toLowerCase()}`, { limit: 5, windowMs: 15 * 60 * 1000 })
+  if (!limited.allowed) {
+    return { error: { email: [`Too many attempts. Try again in ${limited.retryAfterSeconds} seconds.`] } }
+  }
 
   // Check if email already exists
   const existing = await prisma.user.findUnique({ where: { email } })
@@ -57,6 +69,8 @@ const SignInSchema = z.object({
 })
 
 export async function signIn(_prevState: unknown, formData: FormData) {
+  const headerStore = await headers()
+  const ip = getClientIp(headerStore)
   const raw = {
     email: formData.get('email'),
     password: formData.get('password'),
@@ -68,6 +82,10 @@ export async function signIn(_prevState: unknown, formData: FormData) {
   }
 
   const { email, password } = result.data
+  const limited = consumeRateLimit(`signin:${ip}:${email.toLowerCase()}`, { limit: 5, windowMs: 15 * 60 * 1000 })
+  if (!limited.allowed) {
+    return { error: { email: [`Too many attempts. Try again in ${limited.retryAfterSeconds} seconds.`] } }
+  }
 
   const user = await prisma.user.findUnique({ where: { email } })
   if (!user || !user.isActive) {
@@ -92,6 +110,8 @@ const ResetRequestSchema = z.object({
 })
 
 export async function requestPasswordReset(_prevState: unknown, formData: FormData) {
+  const headerStore = await headers()
+  const ip = getClientIp(headerStore)
   const raw = {
     email: formData.get('email'),
   }
@@ -102,10 +122,15 @@ export async function requestPasswordReset(_prevState: unknown, formData: FormDa
   }
 
   const { email } = result.data
+  const limited = consumeRateLimit(`password-reset:${ip}:${email.toLowerCase()}`, { limit: 3, windowMs: 60 * 60 * 1000 })
+  if (!limited.allowed) {
+    return { error: { email: [`Too many attempts. Try again in ${limited.retryAfterSeconds} seconds.`] } }
+  }
 
   const user = await prisma.user.findUnique({ where: { email } })
   if (user) {
     const token = crypto.randomBytes(32).toString('hex')
+    const tokenHash = hashResetToken(token)
     const expiresAt = new Date(Date.now() + 1000 * 60 * 60) // 1 hour
 
     // Clean up any old tokens for this email
@@ -114,7 +139,7 @@ export async function requestPasswordReset(_prevState: unknown, formData: FormDa
     })
 
     await prisma.passwordResetToken.create({
-      data: { email, token, expiresAt },
+      data: { email, token: tokenHash, expiresAt },
     })
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
@@ -153,7 +178,7 @@ export async function resetPassword(_prevState: unknown, formData: FormData) {
   const { token, password } = result.data
 
   const resetToken = await prisma.passwordResetToken.findUnique({
-    where: { token },
+    where: { token: hashResetToken(token) },
   })
 
   if (!resetToken || resetToken.expiresAt < new Date()) {

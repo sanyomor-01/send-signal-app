@@ -11,7 +11,7 @@ interface StatCardProps {
   href: string;
 }
 
-export function StatCard({ label, value, icon, href }: StatCardProps) {
+export function StatCard({ label, value, href }: StatCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (

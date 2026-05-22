@@ -10,7 +10,6 @@ import { OnboardingIntro } from './steps/OnboardingIntro'
 
 export type OnboardingData = {
   whatsappAccountId?: string
-  whatsappAccessToken?: string
   whatsappPhoneNumberId?: string
   whatsappDisplayPhoneNumber?: string
   importedLeadIds?: string[]

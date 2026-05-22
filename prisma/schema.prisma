@@ -208,6 +208,7 @@ model Lead {
 
   @@unique([userId, phoneNumber])
   @@index([userId])
+  @@index([userId, status, createdAt])
   @@index([phoneNumber])
   @@index([status])
   @@index([unsubscribed])
@@ -274,6 +275,7 @@ model Template {
 
   @@unique([userId, name, version])
   @@index([userId])
+  @@index([userId, updatedAt])
   @@map("templates")
 }
 
@@ -317,6 +319,8 @@ model Campaign {
   conversationMessages ConversationMessage[]
 
   @@index([userId])
+  @@index([userId, updatedAt])
+  @@index([userId, status, updatedAt])
   @@index([status])
   @@index([scheduledAt])
   @@map("campaigns")
@@ -346,6 +350,9 @@ model CampaignLead {
 
   @@unique([campaignId, leadId])
   @@index([campaignId])
+  @@index([userId, createdAt])
+  @@index([userId, status, createdAt])
+  @@index([userId, direction, createdAt])
   @@index([leadId])
   @@map("campaign_leads")
 }
@@ -436,6 +443,7 @@ model Conversation {
   messages        ConversationMessage[]
 
   @@unique([userId, leadId, whatsappAccountId])
+  @@index([userId, lastMessageAt])
   @@index([leadId])
   @@index([lastMessageAt])
   @@map("conversations")

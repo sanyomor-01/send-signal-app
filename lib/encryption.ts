@@ -1,10 +1,15 @@
 import * as crypto from 'crypto'
 
 const ALGORITHM = 'aes-256-gcm'
-const KEY = Buffer.from(
-  process.env.ENCRYPTION_KEY ?? 'send-signal-encryption-key-32char!', // 32 chars required
-  'utf-8'
-).slice(0, 32)
+const rawKey = process.env.ENCRYPTION_KEY
+if (!rawKey) {
+  throw new Error('ENCRYPTION_KEY must be set to a base64-encoded 32-byte key')
+}
+
+const KEY = Buffer.from(rawKey, 'base64')
+if (KEY.length !== 32) {
+  throw new Error('ENCRYPTION_KEY must decode to exactly 32 bytes')
+}
 
 /**
  * Encrypts sensitive data (e.g. WhatsApp API tokens).

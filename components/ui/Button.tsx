@@ -89,12 +89,13 @@ export function Button({
         /* Secondary */
         .btn--secondary {
           background-color: var(--color-surface-container);
-          color: var(--color-on-surface);
+          color: var(--color-on-surface-variant);
           border-color: var(--color-outline-variant);
         }
         .btn--secondary:hover:not(:disabled) {
           background-color: var(--color-surface-container-high);
-          border-color: var(--color-outline-normal);
+          border-color: var(--color-outline);
+          color: var(--color-on-surface);
         }
 
         /* Danger */
@@ -128,6 +129,18 @@ export function Button({
         /* Spinner */
         .btn__spinner svg {
           animation: spin 0.8s linear infinite;
+        }
+
+        .btn__icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          color: inherit;
+          flex-shrink: 0;
+        }
+
+        .btn__icon :global(svg) {
+          display: block;
         }
 
         @keyframes spin {

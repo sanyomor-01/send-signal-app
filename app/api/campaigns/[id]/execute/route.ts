@@ -27,13 +27,39 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     await prisma.campaign.update({ where: { id }, data: { status: 'RUNNING', startedAt: new Date() } })
 
     // Get next batch of QUEUED messages (database-driven queue — no Redis)
-    const queuedMessages = await prisma.message.findMany({
+    const candidates = await prisma.message.findMany({
       where: {
         campaignId: id,
         status: 'QUEUED',
         direction: 'OUTBOUND',
       },
       take: campaign.batchSize,
+      orderBy: { queuedAt: 'asc' },
+      select: { id: true },
+    })
+
+    const claimedAt = new Date()
+    const candidateIds = candidates.map((message) => message.id)
+
+    if (candidateIds.length > 0) {
+      await prisma.message.updateMany({
+        where: {
+          id: { in: candidateIds },
+          status: 'QUEUED',
+          direction: 'OUTBOUND',
+        },
+        data: { status: 'SENDING', sendingAt: claimedAt },
+      })
+    }
+
+    const queuedMessages = await prisma.message.findMany({
+      where: {
+        id: { in: candidateIds },
+        campaignId: id,
+        status: 'SENDING',
+        direction: 'OUTBOUND',
+        sendingAt: claimedAt,
+      },
       include: { lead: true },
       orderBy: { queuedAt: 'asc' },
     })
@@ -70,8 +96,27 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           break
         }
 
-        // Mark as sending
-        await prisma.message.update({ where: { id: msg.id }, data: { status: 'SENDING', sendingAt: new Date() } })
+        if (!msg.lead.optIn || msg.lead.unsubscribed) {
+          await prisma.message.update({
+            where: { id: msg.id },
+            data: { status: 'UNSUBSCRIBED', failureReason: 'Lead opted out before send' },
+          })
+          if (msg.campaignLeadId) {
+            await prisma.campaignLead.update({
+              where: { id: msg.campaignLeadId },
+              data: {
+                status: 'UNSUBSCRIBED',
+                excludedReason: 'Lead opted out before send',
+                processedAt: new Date(),
+              },
+            })
+          }
+          await prisma.campaign.update({
+            where: { id },
+            data: { totalUnsubscribed: { increment: 1 } },
+          })
+          continue
+        }
 
         // Send via WhatsApp Business API — server-side only
         const waResponse = await fetch(
@@ -100,10 +145,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
             where: { id: msg.id },
             data: { status: 'SENT', whatsappMessageId: waMessageId, sentAt: new Date() },
           })
-          await prisma.campaignLead.update({
-            where: { id: msg.campaignLeadId ?? '' },
-            data: { status: 'SENT', processedAt: new Date() },
-          })
+          if (msg.campaignLeadId) {
+            await prisma.campaignLead.update({
+              where: { id: msg.campaignLeadId },
+              data: { status: 'SENT', processedAt: new Date() },
+            })
+          }
           await prisma.messageEvent.create({
             data: { messageId: msg.id, eventType: 'sent', eventPayloadJson: waJson, occurredAt: new Date() },
           })

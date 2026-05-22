@@ -4,6 +4,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   useCallback,
 } from "react";
@@ -50,8 +51,12 @@ const TOAST_DURATION = 7000; // 7 seconds per notifications.md (5–10s)
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const timeoutIds = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const removeToast = useCallback((id: string) => {
+    const timeoutId = timeoutIds.current.get(id);
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutIds.current.delete(id);
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
@@ -59,10 +64,19 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     (toast: Omit<Toast, "id">) => {
       const id = Math.random().toString(36).slice(2);
       setToasts((prev) => [...prev.slice(-4), { ...toast, id }]); // Max 5 toasts
-      setTimeout(() => removeToast(id), TOAST_DURATION);
+      const timeoutId = setTimeout(() => removeToast(id), TOAST_DURATION);
+      timeoutIds.current.set(id, timeoutId);
     },
     [removeToast],
   );
+
+  useEffect(() => {
+    const timers = timeoutIds.current;
+    return () => {
+      timers.forEach((timeoutId) => clearTimeout(timeoutId));
+      timers.clear();
+    };
+  }, []);
 
   const success = useCallback(
     (title: string, message?: string) =>

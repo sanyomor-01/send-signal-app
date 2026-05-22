@@ -9,20 +9,18 @@ interface SendMailOptions {
 export async function sendEmail({ to, subject, html }: SendMailOptions) {
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env
 
-  // During development, if no SMTP is configured, we can just log it
   if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
-    console.log('⚠️ SMTP environment variables not fully configured.')
-    console.log(`✉️ Would have sent email to ${to} with subject: ${subject}`)
-    console.log('--- Email Content ---')
-    console.log(html)
-    console.log('---------------------')
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('SMTP environment variables are required in production')
+    }
+    console.log(`SMTP not configured; skipped email to ${to} with subject: ${subject}`)
     return
   }
 
   const transporter = nodemailer.createTransport({
     host: SMTP_HOST,
     port: parseInt(SMTP_PORT),
-    secure: parseInt(SMTP_PORT) === 465, // true for 465, false for other ports
+    secure: parseInt(SMTP_PORT) === 465,
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASS,

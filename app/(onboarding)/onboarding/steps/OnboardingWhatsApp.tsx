@@ -35,9 +35,7 @@ export function OnboardingWhatsApp({
   const [error, setError] = useState<string | null>(null);
 
   // State A fields
-  const [accessToken, setAccessToken] = useState(
-    data?.whatsappAccessToken || "",
-  );
+  const [accessToken, setAccessToken] = useState("");
   const [showToken, setShowToken] = useState(false);
 
   // State B fields
@@ -145,10 +143,10 @@ export function OnboardingWhatsApp({
       setState("C");
       onComplete({
         whatsappAccountId: json.data.account.id,
-        whatsappAccessToken: accessToken,
         whatsappPhoneNumberId: selected.phoneNumberId,
         whatsappDisplayPhoneNumber: selected.displayPhoneNumber,
       });
+      setAccessToken("");
     } catch {
       setError("Failed to connect. Please try again.");
     } finally {

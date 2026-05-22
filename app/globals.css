@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────
@@ -379,5 +378,28 @@ button {
 @media (min-width: 900px) {
   .auth-panel-left {
     display: flex !important;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   DASHBOARD RESPONSIVE STYLES
+   ─────────────────────────────────────────── */
+
+.dashboard-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 380px !important;
+  gap: 1.5rem !important;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
   }
 }

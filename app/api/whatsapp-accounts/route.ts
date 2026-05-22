@@ -3,8 +3,12 @@ import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { encrypt, decrypt } from '@/lib/encryption'
 import { successResponse, errorResponse, unauthorizedResponse, serverErrorResponse } from '@/lib/api'
+import { getConfiguredAppUrl } from '@/lib/webhooks'
+import { consumeRateLimit, getClientIp } from '@/lib/rate-limit'
 import { z } from 'zod'
 import * as crypto from 'crypto'
+
+const ALLOW_META_MOCKS = process.env.NODE_ENV !== 'production' && process.env.ALLOW_META_MOCKS === 'true'
 
 // POST /api/whatsapp-accounts — validate token (no auth) OR create account (auth required)
 export async function POST(request: NextRequest) {
@@ -12,10 +16,19 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   const { accessToken, _validateOnly, accountName, phoneNumberId, businessAccountId, displayPhoneNumber, webhookVerifyToken } = body
 
+  const session = await getSession()
+  if (!session) return unauthorizedResponse()
+
   // Validate-only request (no auth required)
   if (_validateOnly && accessToken) {
+    const ip = getClientIp(request.headers)
+    const limited = consumeRateLimit(`wa-validate:${ip}:${session.userId}`, { limit: 10, windowMs: 15 * 60 * 1000 })
+    if (!limited.allowed) {
+      return errorResponse(`Too many validation attempts. Try again in ${limited.retryAfterSeconds} seconds.`, 429)
+    }
+
     // DEV MODE: Allow mock token for testing without Meta API
-    if (accessToken === 'DEV_TEST_TOKEN_2024' || process.env.NODE_ENV === 'development') {
+    if (ALLOW_META_MOCKS && accessToken === 'DEV_TEST_TOKEN_2024') {
       return successResponse({
         phoneNumbers: [
           {
@@ -35,7 +48,9 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      const wabaRes = await fetch(`https://graph.facebook.com/v20.0/me/whatsapp_business_accounts?access_token=${accessToken}`)
+      const wabaRes = await fetch('https://graph.facebook.com/v20.0/me/whatsapp_business_accounts', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
       const wabaData = await wabaRes.json()
       
       if (!wabaRes.ok) {
@@ -58,7 +73,9 @@ export async function POST(request: NextRequest) {
       const phoneNumbers: DiscoveryPhoneNumber[] = []
 
       for (const waba of (wabaData.data as { id: string }[])) {
-        const phoneRes = await fetch(`https://graph.facebook.com/v20.0/${waba.id}/phone_numbers?access_token=${accessToken}`)
+        const phoneRes = await fetch(`https://graph.facebook.com/v20.0/${waba.id}/phone_numbers`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
         const phoneData = await phoneRes.json()
         
         if (phoneRes.ok) {
@@ -80,9 +97,6 @@ export async function POST(request: NextRequest) {
   }
 
   // Account creation (requires auth)
-  const session = await getSession()
-  if (!session) return unauthorizedResponse()
-
   // Validate required fields for account creation
   const schema = z.object({
     accountName: z.string().min(1, 'Account name required'),
@@ -99,7 +113,7 @@ export async function POST(request: NextRequest) {
   const { accountName: name, phoneNumberId: pnId, businessAccountId: baId, accessToken: token, displayPhoneNumber: dpn, webhookVerifyToken: wvt } = result.data
 
   // DEV MODE: Skip Meta API call and create mock account
-  const isDevMock = process.env.NODE_ENV === 'development' || token === 'DEV_TEST_TOKEN_2024'
+  const isDevMock = ALLOW_META_MOCKS && token === 'DEV_TEST_TOKEN_2024'
 
   try {
     const existing = await prisma.whatsappAccount.findUnique({
@@ -183,9 +197,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const protocol = request.headers.get('x-forwarded-proto') || 'http'
-    const host = request.headers.get('host')
-    const callbackUrl = `${protocol}://${host}/api/webhooks/whatsapp/${session.userId}`
+    const callbackUrl = `${getConfiguredAppUrl()}/api/webhooks/whatsapp/${session.userId}`
 
     return successResponse({ 
       account: { ...account, userId: session.userId }, 
@@ -201,7 +213,7 @@ export async function POST(request: NextRequest) {
 }
 
 // GET /api/whatsapp-accounts — list accounts
-export async function GET(request: NextRequest) {
+export async function GET() {
   const session = await getSession()
   if (!session) return unauthorizedResponse()
 

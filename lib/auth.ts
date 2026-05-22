@@ -2,9 +2,12 @@ import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import bcrypt from 'bcryptjs'
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? 'send-signal-secret-please-change-in-production'
-)
+const jwtSecret = process.env.JWT_SECRET
+if (!jwtSecret || jwtSecret.length < 32) {
+  throw new Error('JWT_SECRET must be set to at least 32 characters')
+}
+
+const JWT_SECRET = new TextEncoder().encode(jwtSecret)
 
 const COOKIE_NAME = 'ss_session'
 const SESSION_DURATION = 60 * 60 * 24 * 7 // 7 days in seconds

@@ -5,6 +5,8 @@ import { normalizePhoneNumber } from '@/lib/utils'
 import { successResponse, errorResponse, unauthorizedResponse, serverErrorResponse, parsePagination, buildPaginatedResponse } from '@/lib/api'
 import { z } from 'zod'
 
+const LeadStatusFilter = z.enum(['NEW', 'CONTACTED', 'REPLIED', 'INTERESTED', 'NOT_INTERESTED', 'CONVERTED', 'BOUNCED', 'UNSUBSCRIBED'])
+
 // GET /api/leads — paginated, filtered list
 export async function GET(request: NextRequest) {
   const session = await getSession()
@@ -15,6 +17,11 @@ export async function GET(request: NextRequest) {
   const search = params.get('search') ?? ''
   const status = params.get('status') ?? ''
   const tagId = params.get('tagId') ?? ''
+
+  if (status) {
+    const parsedStatus = LeadStatusFilter.safeParse(status)
+    if (!parsedStatus.success) return errorResponse('Invalid lead status filter', 400)
+  }
 
   const where: Record<string, unknown> = {
     userId: session.userId,

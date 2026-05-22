@@ -1,7 +1,10 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isUnsubscribeMessage } from '@/lib/utils'
-import { successResponse, serverErrorResponse } from '@/lib/api'
+import { successResponse, errorResponse, serverErrorResponse } from '@/lib/api'
+import { verifyMetaWebhookSignature } from '@/lib/webhooks'
+
+export const runtime = 'nodejs'
 
 // GET /api/webhooks/whatsapp/[userId] — Meta webhook verification
 export async function GET(
@@ -46,7 +49,12 @@ export async function POST(
 ) {
   const { userId } = await params
   try {
-    const body = await request.json()
+    const rawBody = await request.text()
+    if (!verifyMetaWebhookSignature(rawBody, request.headers.get('x-hub-signature-256'))) {
+      return errorResponse('Invalid webhook signature', 401)
+    }
+
+    const body = JSON.parse(rawBody)
     const entries = body?.entry ?? []
 
     for (const entry of entries) {
@@ -55,6 +63,7 @@ export async function POST(
         const value = change.value ?? {}
         const messages = value.messages ?? []
         const statuses = value.statuses ?? []
+        const phoneNumberId = value.metadata?.phone_number_id as string | undefined
 
         // ── Handle delivery status updates ───────────────
         for (const status of statuses) {
@@ -131,7 +140,7 @@ export async function POST(
                 userId: lead.userId,
                 leadId: lead.id,
                 eventType: 'LEAD_UNSUBSCRIBED',
-                description: `Lead unsubscribed via keyword: "${text.trim()}"`,
+                description: `Lead ${lead.id} unsubscribed via WhatsApp keyword`,
               },
             })
           } else {
@@ -156,13 +165,13 @@ export async function POST(
                 userId: lead.userId,
                 leadId: lead.id,
                 eventType: 'REPLY_RECEIVED',
-                description: `Reply received from ${lead.phoneNumber}: "${text.slice(0, 100)}"`,
+                description: `Reply received from lead ${lead.id}`,
               },
             })
           }
 
           const whatsappAccount = await prisma.whatsappAccount.findFirst({
-            where: { userId, isActive: true },
+            where: { userId, isActive: true, ...(phoneNumberId ? { phoneNumberId } : {}) },
           })
 
           if (whatsappAccount) {

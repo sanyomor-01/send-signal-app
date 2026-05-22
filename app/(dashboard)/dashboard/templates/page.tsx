@@ -17,11 +17,26 @@ export default function TemplatesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/templates")
+    const controller = new AbortController();
+    let mounted = true;
+
+    fetch("/api/templates", { signal: controller.signal })
       .then((r) => (r.ok ? r.json() : Promise.reject(r.statusText)))
-      .then((json) => setTemplates(json.data?.data || []))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+      .then((json) => {
+        if (mounted) setTemplates(json.data?.items || []);
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.error(error);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+      controller.abort();
+    };
   }, []);
 
   return (
